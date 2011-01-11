@@ -67,13 +67,7 @@ function! s:StatementStart(lnum)
         if getline(lnum - 1) =~ '\\$'
             let lnum = lnum - 1
         else
-            call cursor(lnum, 1)
-            let maybe_lnum = s:SearchParensPair()
-            if maybe_lnum < 1
-                return lnum
-            else
-                let lnum = maybe_lnum
-            endif
+            return lnum
         endif
     endwhile
 endfunction
@@ -115,13 +109,13 @@ function! GetPythonIndent(lnum)
         if match(getline(parlnum), '[([{]\s*$', parcol - 1) != -1
             if closing_paren
                 return indent(parlnum)
-            else
+            elseif a:lnum - parlnum == 1
                 return indent(parlnum) + &shiftwidth
             endif
         else
             if closing_paren
                 return parcol - 1
-            else
+            elseif a:lnum - parlnum == 1
                 return parcol
             endif
         endif
